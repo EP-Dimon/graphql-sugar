@@ -3,11 +3,11 @@ require 'graphql/sugar/version'
 module GraphQL
   module Sugar
     GRAPHQL_TYPE_MAPPING = {
-      integer: GraphQL::INT_TYPE,
-      float: GraphQL::FLOAT_TYPE,
-      decimal: GraphQL::FLOAT_TYPE,
-      boolean: GraphQL::BOOLEAN_TYPE,
-      string: GraphQL::STRING_TYPE
+      integer: GraphQL::Types::Int,
+      float: GraphQL::Types::Float,
+      decimal: GraphQL::Types::Int,
+      boolean: GraphQL::Types::Boolean,
+      string: GraphQL::Types::String
     }.freeze
 
     def self.get_resolver_graphql_type(field_name)
@@ -51,11 +51,11 @@ module GraphQL
       belongs_to_association = model_class.reflect_on_all_associations(:belongs_to).find { |a| a.foreign_key == column_name }
 
       type = if model_class.defined_enums.key?(column_name)
-               GraphQL::STRING_TYPE
+               GraphQL::Types::String
              elsif belongs_to_association.present?
                GraphQL::ID_TYPE
              else
-               GRAPHQL_TYPE_MAPPING[column_details.type] || GraphQL::STRING_TYPE
+               GRAPHQL_TYPE_MAPPING[column_details.type] || GraphQL::Types::String
              end
 
       type = type.to_list_type if column_details.respond_to?(:array?) && column_details.array?
